@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Party Planner — Welcome</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 60px; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0a0a1a;
+      color: #eee;
+      overflow-x: hidden;
+    }
+
+    .top-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0; z-index: 1030;
+      padding: 0.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    .top-nav.scrolled {
+      background: rgba(15, 15, 35, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom-color: rgba(255,255,255,0.06);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: #fff; text-decoration: none; font-weight: 700; font-size: 1.1rem;
+    }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a, .nav-links button {
+      color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.85rem;
+      font-weight: 500; background: none; border: none; cursor: pointer;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links button:hover { color: #fff; }
+    .nav-cta {
+      background: linear-gradient(135deg, #6f42c1, #e83e8c);
+      color: #fff !important;
+      padding: 0.35rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.8rem !important;
+    }
+    .nav-cta:hover { opacity: 0.9; }
+
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 40%, #2a1a2a 70%, #0a0a1a 100%);
+      padding-top: 60px; position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: ''; position: absolute; top: -50%; right: -20%;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(111,66,193,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    #hero::after {
+      content: ''; position: absolute; bottom: -30%; left: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,62,140,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .brand-icon { animation: bounce 2s infinite; display: inline-block; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #6f42c1, #e83e8c);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .trust-badges {
+      display: flex; gap: 1.5rem; color: rgba(255,255,255,0.4); font-size: 0.8rem; flex-wrap: wrap;
+    }
+    .trust-badges span { display: flex; align-items: center; gap: 0.3rem; }
+    .pulse-arrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      color: rgba(255,255,255,0.4); font-size: 0.85rem; cursor: pointer;
+      transition: color 0.2s;
+    }
+    .pulse-arrow:hover { color: rgba(255,255,255,0.7); }
+    .pulse-arrow i { animation: bob 1.5s ease-in-out infinite; }
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    .auth-card {
+      background: rgba(30, 30, 60, 0.65);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1.25rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .auth-card:hover { box-shadow: 0 30px 80px rgba(0,0,0,0.6); transform: translateY(-2px); }
+    .auth-tab {
+      background: transparent; border: none; color: rgba(255,255,255,0.5);
+      padding: 0.5rem 1.25rem; font-weight: 500; border-radius: 2rem;
+      transition: all 0.2s;
+    }
+    .auth-tab.active { background: rgba(111,66,193,0.3); color: #fff; }
+    .auth-tab:hover:not(.active) { color: rgba(255,255,255,0.8); }
+    .input-group-wrap { position: relative; }
+    .input-icon {
+      position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%);
+      color: rgba(255,255,255,0.35); pointer-events: none; font-size: 1rem;
+    }
+    .form-control {
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+      color: #fff; padding-left: 2.5rem;
+    }
+    .form-control:focus {
+      background: rgba(0,0,0,0.4); border-color: #6f42c1;
+      box-shadow: 0 0 0 0.2rem rgba(111,66,193,0.25); color: #fff;
+    }
+    .form-control::placeholder { color: rgba(255,255,255,0.3); }
+    .auth-btn {
+      background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+      border: none; border-radius: 0.5rem; padding: 0.625rem 1rem;
+      font-weight: 600; transition: opacity 0.2s, transform 0.15s; color: #fff;
+    }
+    .auth-btn:hover { opacity: 0.9; transform: scale(1.02); }
+    .auth-btn:active { transform: scale(0.98); }
+    .spinner-overlay { display: none; }
+    .auth-btn.loading .spinner-overlay { display: inline-block; }
+    .auth-btn.loading .btn-text { visibility: hidden; }
+    .alert-slide { animation: slideIn 0.25s ease; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header { text-align: center; margin-bottom: 3rem; }
+    .section-header h2 { font-weight: 700; margin-bottom: 0.5rem; }
+    .section-header p { color: rgba(255,255,255,0.5); max-width: 500px; margin: 0 auto; }
+
+    #ai-demo { padding: 5rem 0; }
+    .demo-card {
+      background: rgba(30,30,60,0.5); backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06); border-radius: 1rem;
+      padding: 2rem; max-width: 650px; margin: 0 auto;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+    .demo-input {
+      background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5); padding: 0.6rem 1rem; border-radius: 0.5rem;
+      flex: 1; cursor: default; user-select: none;
+    }
+    .demo-btn {
+      background: linear-gradient(135deg, #6f42c1, #e83e8c);
+      border: none; color: #fff; font-weight: 600; border-radius: 0.5rem;
+      padding: 0.6rem 1.5rem; transition: opacity 0.2s, transform 0.15s;
+    }
+    .demo-btn:hover { opacity: 0.9; transform: scale(1.03); }
+    .skeleton-line {
+      height: 14px; background: rgba(255,255,255,0.06); border-radius: 4px;
+      animation: skAnim 1.2s ease-in-out infinite; margin: 0.4rem 0;
+    }
+    .skeleton-line:nth-child(1) { width: 70%; animation-delay: 0s; }
+    .skeleton-line:nth-child(2) { width: 85%; animation-delay: 0.15s; }
+    .skeleton-line:nth-child(3) { width: 60%; animation-delay: 0.3s; }
+    @keyframes skAnim {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .ai-result-item {
+      animation: slideDown 0.3s ease both;
+      padding-left: 0.2rem;
+    }
+
+    #features { padding: 5rem 0; }
+    .feature-card {
+      background: rgba(20,20,45,0.6); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 1rem; padding: 1.75rem; transition: transform 0.25s, box-shadow 0.25s;
+      height: 100%;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 0.75rem;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;
+    }
+    .reveal { opacity: 0; transform: translateY(30px); transition: 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    #footer { padding: 4rem 0 2rem; background: rgba(10,10,26,0.8); border-top: 1px solid rgba(255,255,255,0.04); }
+    .stat-number { font-size: 2.5rem; font-weight: 800; }
+    .stat-label { color: rgba(255,255,255,0.4); font-size: 0.85rem; }
+    .footer-line {
+      color: rgba(255,255,255,0.2); font-size: 0.75rem;
+      display: flex; align-items: center; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    }
+
+    @media (max-width: 991.98px) {
+      #hero { flex-direction: column; text-align: center; padding: 5rem 1rem 2rem; }
+      .hero-left { text-align: center !important; }
+      .trust-badges { justify-content: center; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav" id="topNav">
+    <a href="#" class="nav-brand">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e83e8c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2c-1.82 0-3.53.5-5 1.35 2.99 1.73 5 4.95 5 8.65s-2.01 6.92-5 8.65A7.5 7.5 0 0014.5 2z"/><path d="M7.5 2c1.82 0 3.53.5 5 1.35C9.51 5.08 7.5 8.3 7.5 12s2.01 6.92 5 8.65A7.5 7.5 0 017.5 2z"/></svg>
+      Party Planner
+    </a>
+    <div class="nav-links">
+      <button data-scroll-to="#features">Features</button>
+      <button data-scroll-to="#ai-demo">Demo</button>
+      <button class="nav-cta" data-scroll-to="#hero">Get Started</button>
+    </div>
+  </nav>
+
+  <section id="hero">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7 hero-left" style="text-align:left; position:relative; z-index:1;">
+          <div class="brand-icon mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e83e8c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2c-1.82 0-3.53.5-5 1.35 2.99 1.73 5 4.95 5 8.65s-2.01 6.92-5 8.65A7.5 7.5 0 0014.5 2z"/><path d="M7.5 2c1.82 0 3.53.5 5 1.35C9.51 5.08 7.5 8.3 7.5 12s2.01 6.92 5 8.65A7.5 7.5 0 017.5 2z"/></svg>
+          </div>
+          <h1 class="display-3 fw-bold mb-3" style="line-height:1.15;">
+            Party Planning, <span class="gradient-text">Reimagined</span>
+          </h1>
+          <p class="lead mb-4" style="color:rgba(255,255,255,0.55); max-width:500px;">
+            AI-powered event management for seamless celebrations.
+            From vendor matching to real-time budgets — all in one place.
+          </p>
+          <div class="trust-badges mb-4">
+            <span><i data-lucide="shield-check" style="width:1rem;"></i> Encrypted</span>
+            <span><i data-lucide="leaf" style="width:1rem;"></i> Carbon-Neutral</span>
+            <span><i data-lucide="sparkles" style="width:1rem;"></i> AI-Powered</span>
+          </div>
+          <p class="pulse-arrow" data-scroll-to="#features">
+            <i data-lucide="chevron-down"></i> Explore features
+          </p>
+        </div>
+        <div class="col-lg-5" style="position:relative; z-index:1;">
+          <div class="auth-card p-4">
+            <div class="text-center mb-3">
+              <h5 class="fw-bold mb-1">Welcome Back</h5>
+              <p class="text-muted small mb-0">Sign in or create an account</p>
+            </div>
+            <div class="d-flex justify-content-center gap-2 mb-3">
+              <button class="auth-tab active" id="loginTab">Login</button>
+              <button class="auth-tab" id="registerTab">Register</button>
+            </div>
+            <div id="authAlert" class="alert alert-danger d-none py-2 small alert-slide"></div>
+            <div id="authForms">
+              <div id="loginForm" class="tab-pane">
+                <div class="mb-3 input-group-wrap">
+                  <i data-lucide="user" class="input-icon" style="width:1.1rem;"></i>
+                  <input id="loginUsername" type="text" class="form-control" placeholder="Username">
+                </div>
+                <div class="mb-3 input-group-wrap">
+                  <i data-lucide="lock" class="input-icon" style="width:1.1rem;"></i>
+                  <input id="loginPassword" type="password" class="form-control" placeholder="Password">
+                </div>
+                <button id="loginBtn" class="auth-btn btn w-100">
+                  <span class="spinner-overlay"><span class="spinner-border spinner-border-sm me-1"></span></span>
+                  <span class="btn-text"><i data-lucide="arrow-right" class="me-1"></i>Sign In</span>
+                </button>
+              </div>
+              <div id="registerForm" class="tab-pane d-none">
+                <div class="mb-3 input-group-wrap">
+                  <i data-lucide="user" class="input-icon" style="width:1.1rem;"></i>
+                  <input id="regUsername" type="text" class="form-control" placeholder="Username">
+                </div>
+                <div class="mb-3 input-group-wrap">
+                  <i data-lucide="mail" class="input-icon" style="width:1.1rem;"></i>
+                  <input id="regEmail" type="email" class="form-control" placeholder="Email">
+                </div>
+                <div class="mb-3 input-group-wrap">
+                  <i data-lucide="lock" class="input-icon" style="width:1.1rem;"></i>
+                  <input id="regPassword" type="password" class="form-control" placeholder="Password">
+                </div>
+                <div class="mb-3 input-group-wrap">
+                  <i data-lucide="shield" class="input-icon" style="width:1.1rem;"></i>
+                  <input id="regConfirm" type="password" class="form-control" placeholder="Confirm password">
+                </div>
+                <button id="registerBtn" class="auth-btn btn w-100">
+                  <span class="spinner-overlay"><span class="spinner-border spinner-border-sm me-1"></span></span>
+                  <span class="btn-text"><i data-lucide="user-plus" class="me-1"></i>Create Account</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ai-demo" class="reveal">
+    <div class="container">
+      <div class="section-header">
+        <h2><i data-lucide="sparkles" class="text-primary gradient-text me-1" style="width:1.5rem;height:1.5rem;"></i>Tell Our AI What You're Planning</h2>
+        <p>Describe your event in plain English. Our AI generates the timeline, vendors, and budget — instantly.</p>
+      </div>
+      <div class="demo-card">
+        <div class="d-flex gap-2 mb-3">
+          <span class="input-group-text bg-transparent border-0 p-0" style="color:rgba(255,255,255,0.3);"><i data-lucide="sparkles"></i></span>
+          <div class="demo-input">Plan a rooftop birthday party for 25 guests next Friday…</div>
+          <button class="demo-btn" id="aiDemoBtn">
+            <i data-lucide="bot" class="me-1"></i>Try It
+          </button>
+        </div>
+        <div id="aiDemoSkeleton" class="d-none">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+        </div>
+        <div id="aiDemoResults"></div>
+        <p class="text-muted small mt-3 mb-0" style="opacity:0;">
+          <i data-lucide="bot" class="me-1"></i>AI generates tasks, vendors, and budgets in seconds
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="reveal">
+    <div class="container">
+      <div class="section-header">
+        <h2>Everything You Need</h2>
+        <p>Built for party planners who demand speed, clarity, and control.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 reveal">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(111,66,193,0.2);"><i data-lucide="sparkles" style="color:#6f42c1;" width="22"></i></div>
+            <h6 class="fw-bold">AI-Powered Planning</h6>
+            <p class="text-muted small mb-0">Type what you want. Our AI generates tasks, matches vendors, and builds budgets — no wizards, no friction.</p>
+          </div>
+        </div>
+        <div class="col-md-3 reveal">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(25,135,84,0.2);"><i data-lucide="calendar" style="color:#198754;" width="22"></i></div>
+            <h6 class="fw-bold">Timeline</h6>
+            <p class="text-muted small mb-0">Drag-free scheduling. Check off tasks in real time. Always know what's next.</p>
+          </div>
+        </div>
+        <div class="col-md-3 reveal">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(255,193,7,0.2);"><i data-lucide="dollar-sign" style="color:#ffc107;" width="22"></i></div>
+            <h6 class="fw-bold">Budget Tracking</h6>
+            <p class="text-muted small mb-0">Live spending vs allocation. Color-coded progress bars. No spreadsheets.</p>
+          </div>
+        </div>
+        <div class="col-md-4 reveal">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(220,53,69,0.15);"><i data-lucide="utensils" style="color:#dc3545;" width="22"></i></div>
+            <h6 class="fw-bold">Vendor Matching</h6>
+            <p class="text-muted small mb-0">Auto-suggest caterers, DJs, decorators. Filter by cost and sustainability.</p>
+          </div>
+        </div>
+        <div class="col-md-4 reveal">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(13,202,240,0.2);"><i data-lucide="users" style="color:#0dcaf0;" width="22"></i></div>
+            <h6 class="fw-bold">Guest RSVPs</h6>
+            <p class="text-muted small mb-0">Track invites, confirmations, declines. Plus-one counts. All in one view.</p>
+          </div>
+        </div>
+        <div class="col-md-4 reveal">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(25,135,84,0.2);"><i data-lucide="leaf" style="color:#198754;" width="22"></i></div>
+            <h6 class="fw-bold">Sustainability Hub</h6>
+            <p class="text-muted small mb-0">Real-time carbon offsets. Local sourcing metrics. Green compliance built in.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="footer">
+    <div class="container">
+      <div id="statsSection" class="row g-4 mb-5 text-center">
+        <div class="col-4">
+          <div class="stat-number gradient-text" data-count="100" data-suffix="+">0+</div>
+          <div class="stat-label">Events Planned</div>
+        </div>
+        <div class="col-4">
+          <div class="stat-number gradient-text" data-count="98" data-suffix="%">0%</div>
+          <div class="stat-label">Client Satisfaction</div>
+        </div>
+        <div class="col-4">
+          <div class="stat-number gradient-text" data-count="50" data-suffix="+">0+</div>
+          <div class="stat-label">Eco Vendors</div>
+        </div>
+      </div>
+      <div class="footer-line">
+        <span><i data-lucide="shield-check" style="width:0.8rem;"></i> GDPR Compliant</span>
+        <span><i data-lucide="leaf" style="width:0.8rem;"></i> Carbon Offset</span>
+        <span><i data-lucide="sparkles" style="width:0.8rem;"></i> AI-Assisted</span>
+        <span>Party Planner &copy; 2026 &middot; v1.0</span>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

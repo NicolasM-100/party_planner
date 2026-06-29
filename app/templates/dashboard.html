@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0"><i data-lucide="layout-dashboard" class="me-2"></i>Dashboard</h2>
+  <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#eventModal">
+    <i data-lucide="plus" class="me-1"></i>New Event
+  </button>
+</div>
+
+<div id="bentoGrid" class="row g-3">
+  <div class="col-md-6 col-lg-3">
+    <div class="card h-100 shadow-sm bento-card" id="card-events">
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h5 class="card-title mb-0"><i data-lucide="calendar" class="text-primary me-2"></i>Events</h5>
+          <span class="badge bg-primary fs-6" id="totalEvents">0</span>
+        </div>
+        <p class="text-muted small mb-1">Upcoming: <strong id="upcomingEvents">0</strong></p>
+        <div class="mt-auto">
+          <div class="list-group list-group-flush small" id="recentEvents"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-lg-3">
+    <div class="card h-100 shadow-sm bento-card" id="card-budget">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h5 class="card-title mb-0"><i data-lucide="dollar-sign" class="text-success me-2"></i>Budget</h5>
+        </div>
+        <p class="mb-1 small">Total Budget: <strong id="totalBudget">$0</strong></p>
+        <p class="mb-1 small">Total Spent: <strong id="totalSpent" class="text-warning">$0</strong></p>
+        <div class="progress mt-2" style="height:8px;">
+          <div id="budgetBar" class="progress-bar bg-success" role="progressbar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-lg-3">
+    <div class="card h-100 shadow-sm bento-card" id="card-rsvps">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h5 class="card-title mb-0"><i data-lucide="users" class="text-info me-2"></i>RSVPs</h5>
+        </div>
+        <p class="mb-1 small">Pending: <strong id="pendingRsvps" class="text-warning">0</strong></p>
+        <p class="mb-1 small">Confirmed Guests: <strong id="confirmedGuests" class="text-success">0</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-lg-3">
+    <div class="card h-100 shadow-sm bento-card" id="card-sustainability">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h5 class="card-title mb-0"><i data-lucide="leaf" class="text-success me-2"></i>Sustainability</h5>
+        </div>
+        <p class="mb-1 small">Eco-Verified Vendors: <strong id="ecoVendors">0</strong></p>
+        <p class="mb-0 small"><i data-lucide="shield-check" class="text-success me-1"></i>Green Compliance Tracked</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8 col-lg-6">
+    <div class="card h-100 shadow-sm bento-card" id="card-timeline-preview">
+      <div class="card-body">
+        <h5 class="card-title"><i data-lucide="clock" class="text-primary me-2"></i>Recent Timeline Activity</h5>
+        <div id="timelinePreview" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="eventModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">New Event</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="eventForm">
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input name="title" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="2"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input name="event_date" type="date" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Location</label>
+            <input name="location" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Budget Cap ($)</label>
+            <input name="budget_cap" type="number" step="0.01" class="form-control">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button id="saveEventBtn" type="button" class="btn btn-primary">Create Event</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
