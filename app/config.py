@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     neon_database_url: str
-    replicate_api_token: str = ""
+    deep_infra_token: str = ""
 
     class Config:
         env_file = ".env"
