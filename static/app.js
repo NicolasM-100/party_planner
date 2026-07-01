@@ -296,14 +296,18 @@ if (document.querySelector("#eventDetailPage")) {
   checkAuth().then(() => loadEvent(eventId));
 
   async function loadEvent(id) {
-    const event = await api(`/api/events/${id}`);
-    document.getElementById("eventTitleBreadcrumb").textContent = event.title;
-    const titleEl = document.getElementById("eventTitle");
-    titleEl.textContent = event.title;
-    titleEl.classList.remove("placeholder-glow");
-    const metaEl = document.getElementById("eventMeta");
-    metaEl.textContent = `${event.event_date || "TBD"} — ${event.location || "No location"} — $${event.budget_cap}`;
-    metaEl.classList.remove("placeholder-glow");
+    try {
+      const event = await api(`/api/events/${id}`);
+      document.getElementById("eventTitleBreadcrumb").textContent = event.title;
+      const titleEl = document.getElementById("eventTitle");
+      titleEl.textContent = event.title;
+      titleEl.classList.remove("placeholder-glow");
+      const metaEl = document.getElementById("eventMeta");
+      metaEl.textContent = `${event.event_date || "TBD"} — ${event.location || "No location"} — $${event.budget_cap}`;
+      metaEl.classList.remove("placeholder-glow");
+    } catch (e) {
+      console.error("Failed to load event:", e);
+    }
     loadTimeline(id);
     loadVendors(id);
     loadBudget(id);
@@ -312,52 +316,91 @@ if (document.querySelector("#eventDetailPage")) {
   }
 
   async function loadTimeline(id) {
-    const items = await api(`/api/events/${id}/timeline`);
-    const list = document.getElementById("timelineList");
-    list.classList.remove("placeholder-glow");
-    list.innerHTML = "";
-    items.forEach((i) => list.appendChild(renderTimelineItem(i)));
-    lucide.createIcons();
-    document.getElementById("addTimelineBtn").disabled = false;
+    try {
+      const items = await api(`/api/events/${id}/timeline`);
+      const list = document.getElementById("timelineList");
+      list.classList.remove("placeholder-glow");
+      list.innerHTML = "";
+      items.forEach((i) => list.appendChild(renderTimelineItem(i)));
+      lucide.createIcons();
+    } catch (e) {
+      console.error("Failed to load timeline:", e);
+      const list = document.getElementById("timelineList");
+      list.classList.remove("placeholder-glow");
+      list.innerHTML = '<p class="text-muted small mb-0">Failed to load.</p>';
+    } finally {
+      document.getElementById("addTimelineBtn").disabled = false;
+    }
   }
 
   async function loadVendors(id) {
-    const items = await api(`/api/events/${id}/vendors`);
-    const list = document.getElementById("vendorList");
-    list.classList.remove("placeholder-glow");
-    list.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No vendors yet.</p>';
-    items.forEach((v) => list.appendChild(renderVendor(v)));
-    lucide.createIcons();
-    document.getElementById("addVendorBtn").disabled = false;
+    try {
+      const items = await api(`/api/events/${id}/vendors`);
+      const list = document.getElementById("vendorList");
+      list.classList.remove("placeholder-glow");
+      list.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No vendors yet.</p>';
+      items.forEach((v) => list.appendChild(renderVendor(v)));
+      lucide.createIcons();
+    } catch (e) {
+      console.error("Failed to load vendors:", e);
+      const list = document.getElementById("vendorList");
+      list.classList.remove("placeholder-glow");
+      list.innerHTML = '<p class="text-muted small mb-0">Failed to load.</p>';
+    } finally {
+      document.getElementById("addVendorBtn").disabled = false;
+    }
   }
 
   async function loadBudget(id) {
-    const items = await api(`/api/events/${id}/budget`);
-    const list = document.getElementById("budgetList");
-    list.classList.remove("placeholder-glow");
-    list.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No budget items yet.</p>';
-    items.forEach((b) => list.appendChild(renderBudgetItem(b)));
-    lucide.createIcons();
-    document.getElementById("addBudgetBtn").disabled = false;
+    try {
+      const items = await api(`/api/events/${id}/budget`);
+      const list = document.getElementById("budgetList");
+      list.classList.remove("placeholder-glow");
+      list.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No budget items yet.</p>';
+      items.forEach((b) => list.appendChild(renderBudgetItem(b)));
+      lucide.createIcons();
+    } catch (e) {
+      console.error("Failed to load budget:", e);
+      const list = document.getElementById("budgetList");
+      list.classList.remove("placeholder-glow");
+      list.innerHTML = '<p class="text-muted small mb-0">Failed to load.</p>';
+    } finally {
+      document.getElementById("addBudgetBtn").disabled = false;
+    }
   }
 
   async function loadRSVPs(id) {
-    const items = await api(`/api/events/${id}/rsvps`);
-    const list = document.getElementById("rsvpList");
-    list.classList.remove("placeholder-glow");
-    list.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No RSVPs yet.</p>';
-    items.forEach((r) => list.appendChild(renderRSVP(r)));
-    lucide.createIcons();
-    document.getElementById("addRSVPBtn").disabled = false;
+    try {
+      const items = await api(`/api/events/${id}/rsvps`);
+      const list = document.getElementById("rsvpList");
+      list.classList.remove("placeholder-glow");
+      list.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No RSVPs yet.</p>';
+      items.forEach((r) => list.appendChild(renderRSVP(r)));
+      lucide.createIcons();
+    } catch (e) {
+      console.error("Failed to load RSVPs:", e);
+      const list = document.getElementById("rsvpList");
+      list.classList.remove("placeholder-glow");
+      list.innerHTML = '<p class="text-muted small mb-0">Failed to load.</p>';
+    } finally {
+      document.getElementById("addRSVPBtn").disabled = false;
+    }
   }
 
   async function loadSustainability(id) {
-    const items = await api(`/api/events/${id}/sustainability`);
-    const section = document.getElementById("sustainabilitySection");
-    section.classList.remove("placeholder-glow");
-    section.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No sustainability data yet.</p>';
-    items.forEach((s) => section.appendChild(renderSustainability(s)));
-    lucide.createIcons();
+    try {
+      const items = await api(`/api/events/${id}/sustainability`);
+      const section = document.getElementById("sustainabilitySection");
+      section.classList.remove("placeholder-glow");
+      section.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No sustainability data yet.</p>';
+      items.forEach((s) => section.appendChild(renderSustainability(s)));
+      lucide.createIcons();
+    } catch (e) {
+      console.error("Failed to load sustainability:", e);
+      const section = document.getElementById("sustainabilitySection");
+      section.classList.remove("placeholder-glow");
+      section.innerHTML = '<p class="text-muted small mb-0">Failed to load.</p>';
+    }
   }
 
   async function submitModalForm(formId, endpoint) {
