@@ -49,26 +49,47 @@ function lucIcon(name, className = "") {
   return i;
 }
 
+async function deleteItem(endpoint, id) {
+  const eid = window.__EVENT_ID__;
+  if (!eid) return;
+  await api(`/api/events/${eid}/${endpoint}/${id}`, { method: "DELETE" });
+  window.location.reload();
+}
+
 function renderTimelineItem(item) {
   const icon = item.completed ? "check-circle" : "circle";
   const cls = item.completed ? "text-success" : "text-muted";
+  const statusBadge = item.completed
+    ? el("span", { className: "badge bg-success ms-1" }, ["Completed"])
+    : el("span", { className: "badge bg-secondary ms-1" }, ["Pending"]);
+  const delBtn = el("button", { className: "btn btn-sm text-danger p-0" }, [lucIcon("trash-2")]);
+  delBtn.onclick = () => deleteItem("timeline", item.id);
   return el("div", { className: "d-flex align-items-center gap-2 py-1 border-bottom border-secondary" }, [
     lucIcon(icon, cls),
-    el("span", { className: "small flex-grow-1" }, [item.title]),
-    item.event_datetime ? el("small", { className: "text-muted" }, [new Date(item.event_datetime).toLocaleString()]) : el("span"),
+    el("div", { className: "flex-grow-1" }, [
+      el("div", { className: "d-flex align-items-center" }, [
+        el("span", { className: "small fw-bold" }, [item.title]),
+        statusBadge,
+        item.sort_order > 0 ? el("small", { className: "text-muted ms-1" }, [`#${item.sort_order}`]) : null,
+      ]),
+      item.event_datetime ? el("small", { className: "text-muted" }, [new Date(item.event_datetime).toLocaleString()]) : null,
+    ]),
+    delBtn,
   ]);
 }
 
 function renderVendor(v) {
+  const delBtn = el("button", { className: "btn btn-sm text-danger p-0 ms-2" }, [lucIcon("trash-2")]);
+  delBtn.onclick = () => deleteItem("vendors", v.id);
   return el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
     el("div", {}, [
       el("span", { className: "small fw-bold" }, [v.name]),
       v.category ? el("small", { className: "text-muted ms-2" }, [v.category]) : null,
       v.eco_verified ? el("span", { className: "badge bg-success ms-1" }, ["eco"]) : null,
     ]),
-    el("div", { className: "text-muted small" }, [
-      v.contact ? el("small", { className: "me-2" }, [v.contact]) : null,
-      el("span", {}, [`$${v.cost}`]),
+    el("div", { className: "d-flex align-items-center gap-2" }, [
+      el("span", { className: "text-muted small" }, [v.contact ? `${v.contact} — ` : "", `$${v.cost}`]),
+      delBtn,
     ]),
   ]);
 }
@@ -76,10 +97,12 @@ function renderVendor(v) {
 function renderBudgetItem(b) {
   const pct = b.allocated > 0 ? Math.min((b.spent / b.allocated) * 100, 100) : 0;
   const clr = pct > 90 ? "danger" : pct > 70 ? "warning" : "success";
+  const delBtn = el("button", { className: "btn btn-sm text-danger p-0 ms-2" }, [lucIcon("trash-2")]);
+  delBtn.onclick = () => deleteItem("budget", b.id);
   return el("div", { className: "mb-2" }, [
     el("div", { className: "d-flex justify-content-between small mb-1" }, [
       el("span", {}, [b.category]),
-      el("span", {}, [`$${b.spent} / $${b.allocated}`]),
+      el("span", { className: "d-flex align-items-center gap-1" }, [`$${b.spent} / $${b.allocated}`, delBtn]),
     ]),
     el("div", { className: "progress", style: "height:6px" }, [
       el("div", { className: `progress-bar bg-${clr}`, style: `width:${pct}%`, role: "progressbar" }),
@@ -89,6 +112,8 @@ function renderBudgetItem(b) {
 
 function renderRSVP(r) {
   const clr = r.status === "confirmed" ? "success" : r.status === "declined" ? "danger" : "warning";
+  const delBtn = el("button", { className: "btn btn-sm text-danger p-0 ms-1" }, [lucIcon("trash-2")]);
+  delBtn.onclick = () => deleteItem("rsvps", r.id);
   return el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
     el("div", {}, [
       el("span", { className: "small fw-bold" }, [r.guest_name]),
@@ -97,16 +122,22 @@ function renderRSVP(r) {
     el("div", { className: "d-flex align-items-center gap-2" }, [
       el("span", { className: `badge bg-${clr}` }, [r.status]),
       r.plus_ones ? el("small", { className: "text-muted" }, [`+${r.plus_ones}`]) : null,
+      delBtn,
     ]),
   ]);
 }
 
 function renderSustainability(s) {
   const kilosToTons = (kg) => (kg / 1000).toFixed(2);
-  return el("div", { className: "d-flex flex-wrap gap-3 py-1 border-bottom border-secondary" }, [
-    el("span", { className: "small" }, [`Carbon Offset: ${kilosToTons(s.carbon_offset_kg)} tonnes`]),
-    el("span", { className: "small" }, [`Local Sourcing: ${s.local_sourcing_pct}%`]),
-    el("span", { className: "small" }, [`Waste Reduced: ${s.waste_reduction_kg} kg`]),
+  const delBtn = el("button", { className: "btn btn-sm text-danger p-0 ms-2" }, [lucIcon("trash-2")]);
+  delBtn.onclick = () => deleteItem("sustainability", s.id);
+  return el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
+    el("div", { className: "d-flex flex-wrap gap-3" }, [
+      el("span", { className: "small" }, [`Carbon Offset: ${kilosToTons(s.carbon_offset_kg)} tonnes`]),
+      el("span", { className: "small" }, [`Local Sourcing: ${s.local_sourcing_pct}%`]),
+      el("span", { className: "small" }, [`Waste Reduced: ${s.waste_reduction_kg} kg`]),
+    ]),
+    delBtn,
   ]);
 }
 
@@ -267,8 +298,12 @@ if (document.querySelector("#eventDetailPage")) {
   async function loadEvent(id) {
     const event = await api(`/api/events/${id}`);
     document.getElementById("eventTitleBreadcrumb").textContent = event.title;
-    document.getElementById("eventTitle").textContent = event.title;
-    document.getElementById("eventMeta").textContent = `${event.event_date || "TBD"} — ${event.location || "No location"} — $${event.budget_cap}`;
+    const titleEl = document.getElementById("eventTitle");
+    titleEl.textContent = event.title;
+    titleEl.classList.remove("placeholder-glow");
+    const metaEl = document.getElementById("eventMeta");
+    metaEl.textContent = `${event.event_date || "TBD"} — ${event.location || "No location"} — $${event.budget_cap}`;
+    metaEl.classList.remove("placeholder-glow");
     loadTimeline(id);
     loadVendors(id);
     loadBudget(id);
@@ -279,38 +314,50 @@ if (document.querySelector("#eventDetailPage")) {
   async function loadTimeline(id) {
     const items = await api(`/api/events/${id}/timeline`);
     const list = document.getElementById("timelineList");
+    list.classList.remove("placeholder-glow");
     list.innerHTML = "";
     items.forEach((i) => list.appendChild(renderTimelineItem(i)));
     lucide.createIcons();
+    document.getElementById("addTimelineBtn").disabled = false;
   }
 
   async function loadVendors(id) {
     const items = await api(`/api/events/${id}/vendors`);
     const list = document.getElementById("vendorList");
+    list.classList.remove("placeholder-glow");
     list.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No vendors yet.</p>';
     items.forEach((v) => list.appendChild(renderVendor(v)));
     lucide.createIcons();
+    document.getElementById("addVendorBtn").disabled = false;
   }
 
   async function loadBudget(id) {
     const items = await api(`/api/events/${id}/budget`);
     const list = document.getElementById("budgetList");
+    list.classList.remove("placeholder-glow");
     list.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No budget items yet.</p>';
     items.forEach((b) => list.appendChild(renderBudgetItem(b)));
+    lucide.createIcons();
+    document.getElementById("addBudgetBtn").disabled = false;
   }
 
   async function loadRSVPs(id) {
     const items = await api(`/api/events/${id}/rsvps`);
     const list = document.getElementById("rsvpList");
+    list.classList.remove("placeholder-glow");
     list.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No RSVPs yet.</p>';
     items.forEach((r) => list.appendChild(renderRSVP(r)));
+    lucide.createIcons();
+    document.getElementById("addRSVPBtn").disabled = false;
   }
 
   async function loadSustainability(id) {
     const items = await api(`/api/events/${id}/sustainability`);
     const section = document.getElementById("sustainabilitySection");
+    section.classList.remove("placeholder-glow");
     section.innerHTML = items.length ? "" : '<p class="text-muted small mb-0">No sustainability data yet.</p>';
     items.forEach((s) => section.appendChild(renderSustainability(s)));
+    lucide.createIcons();
   }
 
   async function submitModalForm(formId, endpoint) {

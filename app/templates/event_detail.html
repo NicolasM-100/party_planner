@@ -18,8 +18,8 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start">
           <div>
-            <h3 id="eventTitle" class="mb-1"></h3>
-            <p id="eventMeta" class="text-muted small mb-0"></p>
+            <h3 id="eventTitle" class="mb-1 placeholder-glow"><span class="placeholder col-6"></span></h3>
+            <p id="eventMeta" class="text-muted small mb-0 placeholder-glow"><span class="placeholder col-8"></span></p>
           </div>
           <div class="dropdown">
             <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="dropdown">
@@ -38,11 +38,27 @@
     <div class="card shadow-sm bento-card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i data-lucide="clock" class="text-primary me-2"></i>Timeline</h5>
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#timelineModal">
+        <button id="addTimelineBtn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#timelineModal" disabled>
           <i data-lucide="plus"></i>
         </button>
       </div>
-      <div class="card-body" id="timelineList"></div>
+      <div class="card-body placeholder-glow" id="timelineList">
+        <div class="d-flex align-items-center gap-2 py-1">
+          <span class="placeholder rounded-circle" style="width:18px;height:18px"></span>
+          <span class="placeholder col-7" style="height:14px"></span>
+          <span class="placeholder col-3 ms-auto" style="height:14px"></span>
+        </div>
+        <div class="d-flex align-items-center gap-2 py-1">
+          <span class="placeholder rounded-circle" style="width:18px;height:18px"></span>
+          <span class="placeholder col-8" style="height:14px"></span>
+          <span class="placeholder col-2 ms-auto" style="height:14px"></span>
+        </div>
+        <div class="d-flex align-items-center gap-2 py-1">
+          <span class="placeholder rounded-circle" style="width:18px;height:18px"></span>
+          <span class="placeholder col-6" style="height:14px"></span>
+          <span class="placeholder col-3 ms-auto" style="height:14px"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -50,11 +66,20 @@
     <div class="card shadow-sm bento-card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i data-lucide="utensils" class="text-warning me-2"></i>Vendors</h5>
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#vendorModal">
+        <button id="addVendorBtn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#vendorModal" disabled>
           <i data-lucide="plus"></i>
         </button>
       </div>
-      <div class="card-body" id="vendorList"></div>
+      <div class="card-body placeholder-glow" id="vendorList">
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span class="placeholder col-5" style="height:14px"></span>
+          <span class="placeholder col-3" style="height:14px"></span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span class="placeholder col-4" style="height:14px"></span>
+          <span class="placeholder col-4" style="height:14px"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -62,11 +87,26 @@
     <div class="card shadow-sm bento-card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i data-lucide="dollar-sign" class="text-success me-2"></i>Budget</h5>
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#budgetModal">
+        <button id="addBudgetBtn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#budgetModal" disabled>
           <i data-lucide="plus"></i>
         </button>
       </div>
-      <div class="card-body" id="budgetList"></div>
+      <div class="card-body placeholder-glow" id="budgetList">
+        <div class="mb-2">
+          <div class="d-flex justify-content-between mb-1">
+            <span class="placeholder col-4" style="height:14px"></span>
+            <span class="placeholder col-3" style="height:14px"></span>
+          </div>
+          <span class="placeholder col-12" style="height:6px"></span>
+        </div>
+        <div class="mb-2">
+          <div class="d-flex justify-content-between mb-1">
+            <span class="placeholder col-5" style="height:14px"></span>
+            <span class="placeholder col-3" style="height:14px"></span>
+          </div>
+          <span class="placeholder col-12" style="height:6px"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -74,11 +114,20 @@
     <div class="card shadow-sm bento-card h-100">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i data-lucide="users" class="text-info me-2"></i>RSVPs</h5>
-        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#rsvpModal">
+        <button id="addRSVPBtn" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#rsvpModal" disabled>
           <i data-lucide="plus"></i>
         </button>
       </div>
-      <div class="card-body" id="rsvpList"></div>
+      <div class="card-body placeholder-glow" id="rsvpList">
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span class="placeholder col-5" style="height:14px"></span>
+          <span class="placeholder col-2" style="height:16px"></span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center py-1">
+          <span class="placeholder col-4" style="height:14px"></span>
+          <span class="placeholder col-3" style="height:16px"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -87,7 +136,13 @@
       <div class="card-header">
         <h5 class="mb-0"><i data-lucide="leaf" class="text-success me-2"></i>Sustainability Metrics</h5>
       </div>
-      <div class="card-body" id="sustainabilitySection"></div>
+      <div class="card-body placeholder-glow" id="sustainabilitySection">
+        <div class="d-flex flex-wrap gap-3 py-1">
+          <span class="placeholder col-3" style="height:14px"></span>
+          <span class="placeholder col-3" style="height:14px"></span>
+          <span class="placeholder col-3" style="height:14px"></span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
