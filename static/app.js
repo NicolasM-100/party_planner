@@ -63,8 +63,12 @@ function renderTimelineItem(item) {
     ? el("span", { className: "badge bg-success ms-1" }, ["Completed"])
     : el("span", { className: "badge bg-secondary ms-1" }, ["Pending"]);
   const delBtn = el("button", { className: "btn btn-sm text-danger p-0" }, [lucIcon("trash-2")]);
-  delBtn.onclick = () => deleteItem("timeline", item.id);
-  return el("div", { className: "d-flex align-items-center gap-2 py-1 border-bottom border-secondary" }, [
+  delBtn.onclick = (e) => { e.stopPropagation(); deleteItem("timeline", item.id); };
+  const timeStr = item.event_datetime
+    ? new Date(item.event_datetime).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+      + " " + new Date(item.event_datetime).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+    : null;
+  const row = el("div", { className: "d-flex align-items-center gap-2 py-1 border-bottom border-secondary" }, [
     lucIcon(icon, cls),
     el("div", { className: "flex-grow-1" }, [
       el("div", { className: "d-flex align-items-center" }, [
@@ -72,16 +76,19 @@ function renderTimelineItem(item) {
         statusBadge,
         item.sort_order > 0 ? el("small", { className: "text-muted ms-1" }, [`#${item.sort_order}`]) : null,
       ]),
-      item.event_datetime ? el("small", { className: "text-muted" }, [new Date(item.event_datetime).toLocaleString()]) : null,
+      timeStr ? el("small", { className: "text-muted" }, [timeStr]) : null,
     ]),
     delBtn,
   ]);
+  row.style.cursor = "pointer";
+  row.onclick = () => openEditTimeline(item);
+  return row;
 }
 
 function renderVendor(v) {
   const delBtn = el("button", { className: "btn btn-sm text-danger p-0 ms-2" }, [lucIcon("trash-2")]);
-  delBtn.onclick = () => deleteItem("vendors", v.id);
-  return el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
+  delBtn.onclick = (e) => { e.stopPropagation(); deleteItem("vendors", v.id); };
+  const row = el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
     el("div", {}, [
       el("span", { className: "small fw-bold" }, [v.name]),
       v.category ? el("small", { className: "text-muted ms-2" }, [v.category]) : null,
@@ -92,14 +99,17 @@ function renderVendor(v) {
       delBtn,
     ]),
   ]);
+  row.style.cursor = "pointer";
+  row.onclick = () => openEditVendor(v);
+  return row;
 }
 
 function renderBudgetItem(b) {
   const pct = b.allocated > 0 ? Math.min((b.spent / b.allocated) * 100, 100) : 0;
   const clr = pct > 90 ? "danger" : pct > 70 ? "warning" : "success";
   const delBtn = el("button", { className: "btn btn-sm text-danger p-0 ms-2" }, [lucIcon("trash-2")]);
-  delBtn.onclick = () => deleteItem("budget", b.id);
-  return el("div", { className: "mb-2" }, [
+  delBtn.onclick = (e) => { e.stopPropagation(); deleteItem("budget", b.id); };
+  const row = el("div", { className: "mb-2" }, [
     el("div", { className: "d-flex justify-content-between small mb-1" }, [
       el("span", {}, [b.category]),
       el("span", { className: "d-flex align-items-center gap-1" }, [`$${b.spent} / $${b.allocated}`, delBtn]),
@@ -108,13 +118,16 @@ function renderBudgetItem(b) {
       el("div", { className: `progress-bar bg-${clr}`, style: `width:${pct}%`, role: "progressbar" }),
     ]),
   ]);
+  row.style.cursor = "pointer";
+  row.onclick = () => openEditBudget(b);
+  return row;
 }
 
 function renderRSVP(r) {
   const clr = r.status === "confirmed" ? "success" : r.status === "declined" ? "danger" : "warning";
   const delBtn = el("button", { className: "btn btn-sm text-danger p-0 ms-1" }, [lucIcon("trash-2")]);
-  delBtn.onclick = () => deleteItem("rsvps", r.id);
-  return el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
+  delBtn.onclick = (e) => { e.stopPropagation(); deleteItem("rsvps", r.id); };
+  const row = el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
     el("div", {}, [
       el("span", { className: "small fw-bold" }, [r.guest_name]),
       r.email ? el("small", { className: "text-muted ms-2" }, [r.email]) : null,
@@ -125,13 +138,16 @@ function renderRSVP(r) {
       delBtn,
     ]),
   ]);
+  row.style.cursor = "pointer";
+  row.onclick = () => openEditRSVP(r);
+  return row;
 }
 
 function renderSustainability(s) {
   const kilosToTons = (kg) => (kg / 1000).toFixed(2);
   const delBtn = el("button", { className: "btn btn-sm text-danger p-0 ms-2" }, [lucIcon("trash-2")]);
-  delBtn.onclick = () => deleteItem("sustainability", s.id);
-  return el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
+  delBtn.onclick = (e) => { e.stopPropagation(); deleteItem("sustainability", s.id); };
+  const row = el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
     el("div", { className: "d-flex flex-wrap gap-3" }, [
       el("span", { className: "small" }, [`Carbon Offset: ${kilosToTons(s.carbon_offset_kg)} tonnes`]),
       el("span", { className: "small" }, [`Local Sourcing: ${s.local_sourcing_pct}%`]),
@@ -139,6 +155,9 @@ function renderSustainability(s) {
     ]),
     delBtn,
   ]);
+  row.style.cursor = "pointer";
+  row.onclick = () => openEditSustainability(s);
+  return row;
 }
 
 function showAlert(msg) {
@@ -405,7 +424,10 @@ if (document.querySelector("#eventDetailPage")) {
 
   async function submitModalForm(formId, endpoint) {
     const form = document.getElementById(formId);
-    const data = Object.fromEntries(new FormData(form));
+    const formData = new FormData(form);
+    const editId = formData.get("edit_id");
+    formData.delete("edit_id");
+    const data = Object.fromEntries(formData);
     if (data.eco_verified === "on") data.eco_verified = true;
     else if ("eco_verified" in data) delete data.eco_verified;
     if (data.event_datetime === "") data.event_datetime = null;
@@ -413,19 +435,105 @@ if (document.querySelector("#eventDetailPage")) {
     Object.entries(data).forEach(([k, v]) => {
       if (v === "") delete data[k];
     });
-    await api(`/api/events/${eventId}/${endpoint}`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    if (editId) {
+      const method = endpoint === "vendors" ? "PUT" : "PATCH";
+      await api(`/api/events/${eventId}/${endpoint}/${editId}`, { method, body: JSON.stringify(data) });
+    } else {
+      await api(`/api/events/${eventId}/${endpoint}`, { method: "POST", body: JSON.stringify(data) });
+    }
     bootstrap.Modal.getInstance(document.querySelector(`#${formId.replace("Form", "Modal")}`)).hide();
     form.reset();
     loadEvent(eventId);
   }
 
+  function openEditTimeline(item) {
+    document.getElementById("timelineModalTitle").textContent = "Edit Timeline Item";
+    const form = document.getElementById("timelineForm");
+    form.querySelector('[name="title"]').value = item.title || "";
+    form.querySelector('[name="event_datetime"]').value = item.event_datetime
+      ? new Date(item.event_datetime).toISOString().slice(0, 16) : "";
+    form.querySelector('[name="sort_order"]').value = item.sort_order ?? 0;
+    document.getElementById("timelineEditId").value = item.id;
+    document.getElementById("saveTimelineBtn").textContent = "Save";
+    new bootstrap.Modal(document.getElementById("timelineModal")).show();
+  }
+
+  function openEditVendor(v) {
+    document.getElementById("vendorModalTitle").textContent = "Edit Vendor";
+    const form = document.getElementById("vendorForm");
+    form.querySelector('[name="name"]').value = v.name || "";
+    form.querySelector('[name="category"]').value = v.category || "";
+    form.querySelector('[name="contact"]').value = v.contact || "";
+    form.querySelector('[name="cost"]').value = v.cost || 0;
+    form.querySelector('[name="eco_verified"]').checked = v.eco_verified || false;
+    document.getElementById("vendorEditId").value = v.id;
+    document.getElementById("saveVendorBtn").textContent = "Save";
+    new bootstrap.Modal(document.getElementById("vendorModal")).show();
+  }
+
+  function openEditBudget(b) {
+    document.getElementById("budgetModalTitle").textContent = "Edit Budget Item";
+    const form = document.getElementById("budgetForm");
+    form.querySelector('[name="category"]').value = b.category || "";
+    form.querySelector('[name="allocated"]').value = b.allocated || 0;
+    form.querySelector('[name="spent"]').value = b.spent || 0;
+    document.getElementById("budgetEditId").value = b.id;
+    document.getElementById("saveBudgetBtn").textContent = "Save";
+    new bootstrap.Modal(document.getElementById("budgetModal")).show();
+  }
+
+  function openEditRSVP(r) {
+    document.getElementById("rsvpModalTitle").textContent = "Edit RSVP";
+    const form = document.getElementById("rsvpForm");
+    form.querySelector('[name="guest_name"]').value = r.guest_name || "";
+    form.querySelector('[name="email"]').value = r.email || "";
+    form.querySelector('[name="status"]').value = r.status || "pending";
+    form.querySelector('[name="plus_ones"]').value = r.plus_ones || 0;
+    document.getElementById("rsvpEditId").value = r.id;
+    document.getElementById("saveRSVPBtn").textContent = "Save";
+    new bootstrap.Modal(document.getElementById("rsvpModal")).show();
+  }
+
+  function openEditSustainability(s) {
+    document.getElementById("sustainabilityModalTitle").textContent = "Edit Sustainability Metric";
+    const form = document.getElementById("sustainabilityForm");
+    form.querySelector('[name="carbon_offset_kg"]').value = s.carbon_offset_kg || 0;
+    form.querySelector('[name="local_sourcing_pct"]').value = s.local_sourcing_pct || 0;
+    form.querySelector('[name="waste_reduction_kg"]').value = s.waste_reduction_kg || 0;
+    document.getElementById("sustainabilityEditId").value = s.id;
+    document.getElementById("saveSustainabilityBtn").textContent = "Save";
+    new bootstrap.Modal(document.getElementById("sustainabilityModal")).show();
+  }
+
+  document.getElementById("timelineModal").addEventListener("hidden.bs.modal", () => {
+    document.getElementById("timelineModalTitle").textContent = "Add Timeline Item";
+    document.getElementById("timelineEditId").value = "";
+    document.getElementById("saveTimelineBtn").textContent = "Add";
+  });
+  document.getElementById("vendorModal").addEventListener("hidden.bs.modal", () => {
+    document.getElementById("vendorModalTitle").textContent = "Add Vendor";
+    document.getElementById("vendorEditId").value = "";
+    document.getElementById("saveVendorBtn").textContent = "Add";
+  });
+  document.getElementById("budgetModal").addEventListener("hidden.bs.modal", () => {
+    document.getElementById("budgetModalTitle").textContent = "Add Budget Item";
+    document.getElementById("budgetEditId").value = "";
+    document.getElementById("saveBudgetBtn").textContent = "Add";
+  });
+  document.getElementById("rsvpModal").addEventListener("hidden.bs.modal", () => {
+    document.getElementById("rsvpModalTitle").textContent = "Add RSVP";
+    document.getElementById("rsvpEditId").value = "";
+    document.getElementById("saveRSVPBtn").textContent = "Add";
+  });
+  document.getElementById("sustainabilityModal").addEventListener("hidden.bs.modal", () => {
+    document.getElementById("sustainabilityEditId").value = "";
+  });
+
   document.getElementById("saveTimelineBtn")?.addEventListener("click", () => submitModalForm("timelineForm", "timeline"));
   document.getElementById("saveVendorBtn")?.addEventListener("click", () => submitModalForm("vendorForm", "vendors"));
   document.getElementById("saveBudgetBtn")?.addEventListener("click", () => submitModalForm("budgetForm", "budget"));
   document.getElementById("saveRSVPBtn")?.addEventListener("click", () => submitModalForm("rsvpForm", "rsvps"));
+  document.getElementById("saveSustainabilityBtn")?.addEventListener("click", () => submitModalForm("sustainabilityForm", "sustainability"));
 }
 
 document.getElementById("saveEventBtn")?.addEventListener("click", async () => {
