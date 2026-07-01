@@ -551,11 +551,11 @@ document.getElementById("logoutBtn")?.addEventListener("click", async () => {
   window.location.href = "/";
 });
 
-document.getElementById("aiGenerateBtn")?.addEventListener("click", async () => {
-  const input = document.getElementById("aiPrompt");
-  const prompt = input.value.trim();
-  if (!prompt) return;
-  loading("aiLoading", true);
+async function startGeneration(prompt) {
+  sessionStorage.setItem("generating", "true");
+  sessionStorage.setItem("generating_prompt", prompt);
+  const modal = new bootstrap.Modal(document.getElementById("generateLoadingModal"));
+  modal.show();
   try {
     const result = await api("/api/ai/generate", { method: "POST", body: JSON.stringify({ prompt }) });
     if (result.title) {
@@ -626,13 +626,23 @@ document.getElementById("aiGenerateBtn")?.addEventListener("click", async () => 
         }));
       }
       await Promise.all(promises);
+      sessionStorage.removeItem("generating");
+      sessionStorage.removeItem("generating_prompt");
       window.location.href = `/events/${event.id}`;
     }
   } catch (e) {
     console.error(e);
-  } finally {
-    loading("aiLoading", false);
+    sessionStorage.removeItem("generating");
+    sessionStorage.removeItem("generating_prompt");
+    modal.hide();
   }
+}
+
+document.getElementById("aiGenerateBtn")?.addEventListener("click", () => {
+  const input = document.getElementById("aiPrompt");
+  const prompt = input.value.trim();
+  if (!prompt) return;
+  startGeneration(prompt);
 });
 
 document.getElementById("voiceFab")?.addEventListener("click", () => {
@@ -741,3 +751,16 @@ document.getElementById("aiDemoBtn")?.addEventListener("click", () => {
     });
   }, 1200);
 });
+
+(function () {
+  if (sessionStorage.getItem("generating") === "true") {
+    const prompt = sessionStorage.getItem("generating_prompt");
+    if (prompt) {
+      const modal = new bootstrap.Modal(document.getElementById("generateLoadingModal"));
+      modal.show();
+      startGeneration(prompt);
+    } else {
+      sessionStorage.removeItem("generating");
+    }
+  }
+})();

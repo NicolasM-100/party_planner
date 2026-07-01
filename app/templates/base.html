@@ -90,15 +90,23 @@
           <i data-lucide="bot" class="me-1"></i>Generate
         </button>
       </div>
-      <div id="aiLoading" class="mt-2 d-none">
-        <div class="skeleton-pulse" style="height: 20px; width: 60%;"></div>
-      </div>
     </div>
   </div>
 
   <main class="container-fluid py-4">
     {% block content %}{% endblock %}
   </main>
+
+  <div class="modal fade" id="generateLoadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content text-center py-4">
+        <div class="spinner-border text-primary mx-auto mb-3" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mb-0 fw-semibold">Please wait, we are generating your event!</p>
+      </div>
+    </div>
+  </div>
 
   <button id="voiceFab" class="fab btn btn-primary btn-lg" title="Voice command">
     <i data-lucide="mic"></i>
