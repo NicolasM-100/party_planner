@@ -35,6 +35,7 @@ function el(tag, attrs = {}, children = []) {
     else e.setAttribute(k, v);
   }
   for (const c of children) {
+    if (c == null) continue;
     if (typeof c === "string") e.appendChild(document.createTextNode(c));
     else e.appendChild(c);
   }
