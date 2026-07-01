@@ -48,6 +48,67 @@ function lucIcon(name, className = "") {
   return i;
 }
 
+function renderTimelineItem(item) {
+  const icon = item.completed ? "check-circle" : "circle";
+  const cls = item.completed ? "text-success" : "text-muted";
+  return el("div", { className: "d-flex align-items-center gap-2 py-1 border-bottom border-secondary" }, [
+    lucIcon(icon, cls),
+    el("span", { className: "small flex-grow-1" }, [item.title]),
+    item.event_datetime ? el("small", { className: "text-muted" }, [new Date(item.event_datetime).toLocaleString()]) : el("span"),
+  ]);
+}
+
+function renderVendor(v) {
+  return el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
+    el("div", {}, [
+      el("span", { className: "small fw-bold" }, [v.name]),
+      v.category ? el("small", { className: "text-muted ms-2" }, [v.category]) : null,
+      v.eco_verified ? el("span", { className: "badge bg-success ms-1" }, ["eco"]) : null,
+    ]),
+    el("div", { className: "text-muted small" }, [
+      v.contact ? el("small", { className: "me-2" }, [v.contact]) : null,
+      el("span", {}, [`$${v.cost}`]),
+    ]),
+  ]);
+}
+
+function renderBudgetItem(b) {
+  const pct = b.allocated > 0 ? Math.min((b.spent / b.allocated) * 100, 100) : 0;
+  const clr = pct > 90 ? "danger" : pct > 70 ? "warning" : "success";
+  return el("div", { className: "mb-2" }, [
+    el("div", { className: "d-flex justify-content-between small mb-1" }, [
+      el("span", {}, [b.category]),
+      el("span", {}, [`$${b.spent} / $${b.allocated}`]),
+    ]),
+    el("div", { className: "progress", style: "height:6px" }, [
+      el("div", { className: `progress-bar bg-${clr}`, style: `width:${pct}%`, role: "progressbar" }),
+    ]),
+  ]);
+}
+
+function renderRSVP(r) {
+  const clr = r.status === "confirmed" ? "success" : r.status === "declined" ? "danger" : "warning";
+  return el("div", { className: "d-flex justify-content-between align-items-center py-1 border-bottom border-secondary" }, [
+    el("div", {}, [
+      el("span", { className: "small fw-bold" }, [r.guest_name]),
+      r.email ? el("small", { className: "text-muted ms-2" }, [r.email]) : null,
+    ]),
+    el("div", { className: "d-flex align-items-center gap-2" }, [
+      el("span", { className: `badge bg-${clr}` }, [r.status]),
+      r.plus_ones ? el("small", { className: "text-muted" }, [`+${r.plus_ones}`]) : null,
+    ]),
+  ]);
+}
+
+function renderSustainability(s) {
+  const kilosToTons = (kg) => (kg / 1000).toFixed(2);
+  return el("div", { className: "d-flex flex-wrap gap-3 py-1 border-bottom border-secondary" }, [
+    el("span", { className: "small" }, [`Carbon Offset: ${kilosToTons(s.carbon_offset_kg)} tonnes`]),
+    el("span", { className: "small" }, [`Local Sourcing: ${s.local_sourcing_pct}%`]),
+    el("span", { className: "small" }, [`Waste Reduced: ${s.waste_reduction_kg} kg`]),
+  ]);
+}
+
 function showAlert(msg) {
   const el = document.getElementById("authAlert");
   if (!el) return;
