@@ -410,24 +410,70 @@ document.getElementById("aiGenerateBtn")?.addEventListener("click", async () => 
     if (result.title) {
       const event = await api("/api/events", {
         method: "POST",
-        body: JSON.stringify({ title: result.title, description: result.description || "", status: "planning" }),
+        body: JSON.stringify({
+          title: result.title,
+          description: result.description || "",
+          event_date: result.event_date || null,
+          location: result.location || "",
+          budget_cap: result.budget_cap || 0,
+          status: "planning",
+        }),
       });
       const promises = [];
       (result.timeline_items || []).forEach((t, i) => {
         promises.push(api(`/api/events/${event.id}/timeline`, {
-          method: "POST", body: JSON.stringify({ title: t.title, sort_order: t.sort_order || i }),
+          method: "POST",
+          body: JSON.stringify({
+            title: t.title,
+            sort_order: t.sort_order ?? i,
+            event_datetime: t.event_datetime ? new Date(t.event_datetime).toISOString() : null,
+            completed: t.completed || false,
+          }),
         }));
       });
       (result.vendor_suggestions || []).forEach((v) => {
         promises.push(api(`/api/events/${event.id}/vendors`, {
-          method: "POST", body: JSON.stringify({ name: v.name, category: v.category }),
+          method: "POST",
+          body: JSON.stringify({
+            name: v.name,
+            category: v.category || "",
+            contact: v.contact || "",
+            cost: v.cost || 0,
+            eco_verified: v.eco_verified || false,
+          }),
         }));
       });
       (result.budget_estimates || []).forEach((b) => {
         promises.push(api(`/api/events/${event.id}/budget`, {
-          method: "POST", body: JSON.stringify({ category: b.category, allocated: b.allocated }),
+          method: "POST",
+          body: JSON.stringify({
+            category: b.category,
+            allocated: b.allocated || 0,
+            spent: b.spent || 0,
+          }),
         }));
       });
+      (result.guest_suggestions || []).forEach((r) => {
+        promises.push(api(`/api/events/${event.id}/rsvps`, {
+          method: "POST",
+          body: JSON.stringify({
+            guest_name: r.guest_name,
+            email: r.email || "",
+            status: r.status || "pending",
+            plus_ones: r.plus_ones || 0,
+          }),
+        }));
+      });
+      if (result.sustainability) {
+        promises.push(api(`/api/events/${event.id}/sustainability`, {
+          method: "POST",
+          body: JSON.stringify({
+            carbon_offset_kg: result.sustainability.carbon_offset_kg || 0,
+            local_sourcing_pct: result.sustainability.local_sourcing_pct || 0,
+            waste_reduction_kg: result.sustainability.waste_reduction_kg || 0,
+          }),
+        }));
+      }
       await Promise.all(promises);
       window.location.href = `/events/${event.id}`;
     }

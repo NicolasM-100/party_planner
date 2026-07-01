@@ -214,3 +214,50 @@ class AIAction(BaseModel):
     action: str
     item: str
     value: str
+
+
+class AITimelineItem(BaseModel):
+    title: str
+    sort_order: int = 0
+    event_datetime: Optional[str] = None
+    completed: bool = False
+
+
+class AIVendor(BaseModel):
+    name: str
+    category: str = ""
+    contact: str = ""
+    cost: float = 0
+    eco_verified: bool = False
+
+
+class AIBudgetItem(BaseModel):
+    category: str
+    allocated: float = 0
+    spent: float = 0
+
+
+class AIRSVP(BaseModel):
+    guest_name: str
+    email: str = ""
+    status: str = "pending"
+    plus_ones: int = 0
+
+
+class AISustainability(BaseModel):
+    carbon_offset_kg: float = 0
+    local_sourcing_pct: float = 0
+    waste_reduction_kg: float = 0
+
+
+class AIGeneratedEvent(BaseModel):
+    title: str
+    description: str = ""
+    event_date: Optional[date] = None
+    location: str = ""
+    budget_cap: float = 0
+    timeline_items: List[AITimelineItem] = []
+    vendor_suggestions: List[AIVendor] = []
+    budget_estimates: List[AIBudgetItem] = []
+    guest_suggestions: List[AIRSVP] = []
+    sustainability: Optional[AISustainability] = None
